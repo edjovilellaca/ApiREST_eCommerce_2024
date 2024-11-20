@@ -15,6 +15,9 @@ const prodservSchema = new mongoose.Schema({
     cat_prod_serv_estatus: [
       {
             IdTipoGenEstatusOk: { type : String },
+            IdTipoEstatusOK: { type : String },
+            Actual: { type : String },
+            Observacion: { type : String },
             IdGenEstatusOk: { type : String },
             TipoEstatus: { type : String },
             Actual: { type: String },

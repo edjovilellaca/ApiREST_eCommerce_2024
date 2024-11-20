@@ -38,23 +38,17 @@ export const getProdServItem = async( id, keyType) => {
 };
 
 export const postProdServItem = async( paProdServItem ) => {
-
+    console.log('paProdServItem: ', paProdServItem);
     try{
-
         const newProdServ = new ProdServ( paProdServItem );
         return await newProdServ.save();
-
     }catch(error){
-
         if (error.code === 11000) {
-
             throw FAIL(
                 'El producto enviado ya está registradas en el catalogo.',
                 error
             );
-
         } else {
-
             throw FAIL(
                 'No se pudo agregar el producto al catalogo. Error en el servidor.',
                 error
@@ -110,11 +104,15 @@ export const delManyProdServItem = async (filtro) => {
     }
 };
 
-export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
-    if(!seccion.match('cat_prod_serv_estatus' && !seccion.match('cat_prod_serv_archivos'))){
+/* export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
+    console.log('id: ', id);
+    console.log('seccion: ', seccion);
+    if(!seccion.match('cat_prod_serv_estatus' || !seccion.match('cat_prod_serv_archivos'))){
+        console.log('WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOW')
         return { succes: false, error: 'Subdocumento no existe' };
     }
     try {
+        console.log('objInfoAd: ', objInfoAd);
         const productUpdatedProd = await ProdServ.findOneAndUpdate(
             { IdProdServBK: id },
             { $push: { seccion: objInfoAd } },
@@ -123,5 +121,39 @@ export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
         return { succes: true, productUpdatedProd };
     } catch (error) {
         return { succes: false, error };
+    }
+}; */
+
+export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
+    console.log('ID recibido:', id);
+    console.log('Sección:', seccion);
+
+    // Validar secciones permitidas
+    const seccionesValidas = ['cat_prod_serv_estatus', 'cat_prod_serv_archivos'];
+    if (!seccionesValidas.includes(seccion)) {
+        console.error('Sección no válida:', seccion);
+        return { success: false, error: 'Subdocumento no existe o no es válido' };
+    }
+
+    try {
+        console.log('Objeto a agregar:', objInfoAd);
+
+        // Realizar la actualización
+        const productUpdatedProd = await ProdServ.findOneAndUpdate(
+            { IdProdServPK: id }, 
+            { $push: { [seccion]: objInfoAd } },
+            { new: true } 
+        );
+
+        if (!productUpdatedProd) {
+            console.error('No se encontró el documento con IdProdServBK:', id);
+            return { success: false, error: 'Documento no encontrado' };
+        }
+
+        console.log('Documento actualizado:', productUpdatedProd);
+        return { success: true, productUpdatedProd };
+    } catch (error) {
+        console.error('Error al actualizar el documento:', error);
+        return { success: false, error };
     }
 };

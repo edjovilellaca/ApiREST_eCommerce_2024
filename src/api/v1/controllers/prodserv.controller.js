@@ -45,6 +45,7 @@ export const getProdServItem = async ( req, res, next ) => {
 export const postProdServItem = async ( req, res, next ) => {
     try {
         const paProdServItem = req.body;
+        console.log('prodController: ', paProdServItem);
         const newProdServItem = await ProdServServices.postProdServItem(paProdServItem);
         if (!newProdServItem) {
           throw boom.badRequest('No se pudo crear el Producto y/o Servicio.');
@@ -125,9 +126,9 @@ export const subProdServItem = async (req, res, next) => {
     try {
         const { id, seccion } = req.params;
         const paProdServItem = req.body;
-        const updatedProdServItem = 
-        await ProdServServices.pushObjInfoAdProd(id, seccion, paProdServItem );
-        if (!updatedProdServItem) {
+
+        const updatedProdServItem = await ProdServServices.pushObjInfoAdProd(id, seccion, paProdServItem );
+        if (!updatedProdServItem || updatedProdServItem.success === false) {
             throw boom.badRequest('No se pudo agregar el subdocumento del producto.');
         } else if (updatedProdServItem) {
             res.status(200).json(updatedProdServItem);
