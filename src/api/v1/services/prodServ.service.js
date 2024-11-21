@@ -154,3 +154,66 @@ export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
         return { success: false, error };
     }
 };
+
+export const delObjInfoAdProd = async (id, seccion = '', idSubDoc) => {
+    console.log('ID recibido:', id);
+    console.log('Sección:', seccion);
+    console.log('ID del subdocumento a eliminar:', idSubDoc);
+
+    const seccionesValidas = ['cat_prod_serv_estatus', 'cat_prod_serv_archivos'];
+    if (!seccionesValidas.includes(seccion)) {
+        console.error('Sección no válida:', seccion);
+        return { success: false, error: 'Subdocumento no existe o no es válido' };
+    }
+
+    try {
+        const productUpdatedProd = await ProdServ.findOneAndUpdate(
+            { IdProdServPK: id }, 
+            { $pull: { [seccion]: { IdTipoEstatusOK: idSubDoc } } }, 
+            { new: true } 
+        );
+
+        if (!productUpdatedProd) {
+            console.error('No se encontró el documento con IdProdServBK:', id);
+            return { success: false, error: 'Documento no encontrado' };
+        }
+
+        console.log('Documento actualizado después de la eliminación:', productUpdatedProd);
+        return { success: true, productUpdatedProd };
+    } catch (error) {
+        console.error('Error al intentar eliminar el subdocumento:', error);
+        return { success: false, error };
+    }
+};
+
+export const updateObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
+    console.log('ID recibido:', id);
+    console.log('Sección:', seccion);
+
+    const seccionesValidas = ['cat_prod_serv_estatus', 'cat_prod_serv_archivos'];
+    if (!seccionesValidas.includes(seccion)) {
+        console.error('Sección no válida:', seccion);
+        return { success: false, error: 'Subdocumento no existe o no es válido' };
+    }
+
+    try {
+        console.log('Objeto a actualizar:', objInfoAd);
+
+        const productUpdatedProd = await ProdServ.findOneAndUpdate(
+            { IdProdServPK: id, [`${seccion}.IdTipoEstatusOK`]: objInfoAd.IdTipoEstatusOK }, 
+            { $set: { [`${seccion}.$`]: objInfoAd } }, 
+            { new: true } 
+        );
+
+        if (!productUpdatedProd) {
+            console.error('No se encontró el documento o el subdocumento con los IDs proporcionados:', id, objInfoAd._id);
+            return { success: false, error: 'Documento o subdocumento no encontrado' };
+        }
+
+        console.log('Documento actualizado:', productUpdatedProd);
+        return { success: true, productUpdatedProd };
+    } catch (error) {
+        console.error('Error al actualizar el subdocumento:', error);
+        return { success: false, error };
+    }
+};
