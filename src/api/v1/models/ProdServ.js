@@ -1,70 +1,67 @@
 import * as mongoose from 'mongoose';
 
 const prodservSchema = new mongoose.Schema({
-    IdProdServPK: { type : Number, required : true },
-    IdProdServOK: { type : String },
-    IdProdServBK: { type : String },
-    //--
-    IdProdServMaOK: { type : String },
-    IdProdServMaBK: { type : String },
-    //--
-    DesProdServ: { type : String },
-    IdMedidaOK: {  type : String },
-    IdMedidaBK: {  type : String },
-    //FIC: ESTATUS
-    cat_prod_serv_estatus: [
-      {
-            IdTipoGenEstatusOk: { type : String },
-            IdTipoEstatusOK: { type : String },
-            Actual: { type : String },
-            Observacion: { type : String },
-            IdGenEstatusOk: { type : String },
-            TipoEstatus: { type : String },
-            Actual: { type: String },
-            Observacion: { type: String },
-            detail_row: {
-                FechaReg: { type: Date, default: Date.now },
-                UsuarioReg: { type: String }
-            },
-            _id: false,
-        },
-    ],
-    //FIC: ARCHIVOS
-    cat_prod_serv_archivos: [
+    IdInstitutoOK: { type: String, required: true},
+    IdProdServOK: { type: String },
+    IdProdServBK: { type: String },
+    CodigoBarras: { type: String },
+    DesProdServ: { type: String },
+    Indice: { type: String },
+    estatus: [
         {
-            DesArchivo: { type : String },
-            RutaArchivo: { type : String },
-            //FIC: Tipo Archivo
-            IdTipoGenArchivoOK: { type : String },
-            IdGenArchivoOK: { type : String },
-            TipoArchivo: { type : String },
-            //FIC: Sección
-            IdTipoGenSeccionOK: { type : String },
-            IdGenSeccionOK: { type : String },
-            TipoSeccion: { type : String },
-            //---
-            Secuencia: { type : Number },
-            Principal: { type : String },
-            detail_row: {
-                FechaReg: { type: Date, default: Date.now },
-                UsuarioReg: { type: String },
-                FechaUltMod: { type: Date, default: Date.now },
-                UsuarioMod: { type: String },
-                Activo: { type: String, default: 'S' },
-                Borrado: { type: String, default: 'N' },
-            _id: false,
-            },
-            _id: false,
-        },
-    ], 
-    detail_row: {
-          FechaReg: { type: Date, default: Date.now },
-          UsuarioReg: { type: String },
-          FechaUltMod: { type: Date, default: Date.now },
-          UsuarioMod: { type: String },
-          Activo: { type: String, default: 'S' },
-          Borrado: { type: String, default: 'N' }
-    }
+            IdTipoEstatusOK: { type: String },
+            Actual: { type: String },
+            Observacion: { type: String }
+        }
+    ],
+    presentaciones: [
+        {
+            IdPresentaOK: { type: String },
+            IdPresentaBK: { type: String },
+            CodigoBarras: { type: String },
+            DesPresenta: { type: String },
+            Indice: { type: String },
+            Principal: { type: String },
+            estatus: [
+                {
+                    IdTipoEstatusOK: { type: String },
+                    Actual: { type: String },
+                    Observacion: { type: String },
+                }
+            ],
+            info_vta: [
+                {
+                    IdEtiquetaOK: { type: String },
+                    IdEtiqueta: { type: String },
+                    Valor: { type: String },
+                    IdTipoSeccionOK: { type: String },
+                    Secuencia: { type: String }
+                }
+            ],
+            archivos: [
+                {
+                    IdArchivoOK: { type: String },
+                    IdArchivoBK: { type: String },
+                    DesArchivo: { type: String },
+                    RutaArchivo: { type: String },
+                    Path: { type: String },
+                    IdTipoArchivoOK: { type: String },
+                    IdTipoSeccionOK: { type: String },
+                    Secuencia: { type: Number },
+                    Principal: { type: String }
+                }
+            ]
+        }
+    ],
+    info_ad: [
+        {
+            IdEtiquetaOK: { type: String },
+            IdEtiqueta: { type: String },
+            Valor: { type: String },
+            IdTipoSeccionOK: { type: String },
+            Secuencia: { type: Number }
+        }
+    ]
 });
 
 export default mongoose.model(
