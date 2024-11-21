@@ -26,4 +26,7 @@ router.delete('/', prodServController.delManyProdServItem);
 //Añadir subdocumento
 router.post('/:id/:seccion', prodServController.subProdServItem);
 
+//Eliminar subdocumento
+router.delete('/:id/:seccion/:idSubDoc', prodServController.delSubProdServItem);
+
 export default router;

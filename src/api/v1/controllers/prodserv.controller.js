@@ -121,7 +121,6 @@ export const delManyProdServItem = async (req, res, next) => {
 
 
 //Agregar subdocumento
-
 export const subProdServItem = async (req, res, next) => {
     try {
         const { id, seccion } = req.params;
@@ -133,6 +132,22 @@ export const subProdServItem = async (req, res, next) => {
         } else if (updatedProdServItem) {
             res.status(200).json(updatedProdServItem);
         }
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+export const delSubProdServItem = async (req, res, next) => {
+    try {
+        const { id, seccion, idSubDoc } = req.params; 
+        console.log('PEro si jala? ', idSubDoc);
+        const updatedProdServItem = await ProdServServices.delObjInfoAdProd(id, seccion, idSubDoc);
+
+        if (!updatedProdServItem || updatedProdServItem.success === false) {
+            throw boom.badRequest('No se pudo eliminar el subdocumento del producto.');
+        }
+        res.status(200).json(updatedProdServItem);
     } catch (error) {
         next(error);
     }
