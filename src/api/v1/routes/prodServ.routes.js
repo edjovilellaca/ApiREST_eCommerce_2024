@@ -29,4 +29,7 @@ router.post('/:id/:seccion', prodServController.subProdServItem);
 //Eliminar subdocumento
 router.delete('/:id/:seccion/:idSubDoc', prodServController.delSubProdServItem);
 
+//Actualizar subdocumento
+router.post('/update/:id/:seccion', prodServController.updateSubProdServItem);
+
 export default router;

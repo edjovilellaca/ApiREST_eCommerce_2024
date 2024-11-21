@@ -152,3 +152,19 @@ export const delSubProdServItem = async (req, res, next) => {
         next(error);
     }
 };
+// Actualizar subdocumento
+export const updateSubProdServItem = async (req, res, next) => {
+    try {
+        const { id, seccion } = req.params;
+        const paProdServItem = req.body;
+        
+        const updatedProdServItem = await ProdServServices.updateObjInfoAdProd(id, seccion, paProdServItem );
+        if (!updatedProdServItem || updatedProdServItem.success === false) {
+            throw boom.badRequest('No se pudo actualizar el subdocumento del producto.');
+        } else if (updatedProdServItem) {
+            res.status(200).json(updatedProdServItem);
+        }
+    } catch (error) {
+        next(error);
+    }
+};

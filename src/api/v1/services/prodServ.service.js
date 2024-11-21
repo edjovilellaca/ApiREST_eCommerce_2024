@@ -104,6 +104,26 @@ export const delManyProdServItem = async (filtro) => {
     }
 };
 
+/* export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
+    console.log('id: ', id);
+    console.log('seccion: ', seccion);
+    if(!seccion.match('cat_prod_serv_estatus' || !seccion.match('cat_prod_serv_archivos'))){
+        console.log('WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOW')
+        return { succes: false, error: 'Subdocumento no existe' };
+    }
+    try {
+        console.log('objInfoAd: ', objInfoAd);
+        const productUpdatedProd = await ProdServ.findOneAndUpdate(
+            { IdProdServBK: id },
+            { $push: { seccion: objInfoAd } },
+            { new: true }
+        );
+        return { succes: true, productUpdatedProd };
+    } catch (error) {
+        return { succes: false, error };
+    }
+}; */
+
 export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
     console.log('ID recibido:', id);
     console.log('Sección:', seccion);
@@ -131,37 +151,6 @@ export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
         return { success: true, productUpdatedProd };
     } catch (error) {
         console.error('Error al actualizar el documento:', error);
-        return { success: false, error };
-    }
-};
-
-export const delObjInfoAdProd = async (id, seccion = '', idSubDoc) => {
-    console.log('ID recibido:', id);
-    console.log('Sección:', seccion);
-    console.log('ID del subdocumento a eliminar:', idSubDoc);
-
-    const seccionesValidas = ['cat_prod_serv_estatus', 'cat_prod_serv_archivos'];
-    if (!seccionesValidas.includes(seccion)) {
-        console.error('Sección no válida:', seccion);
-        return { success: false, error: 'Subdocumento no existe o no es válido' };
-    }
-
-    try {
-        const productUpdatedProd = await ProdServ.findOneAndUpdate(
-            { IdProdServPK: id }, 
-            { $pull: { [seccion]: { IdTipoEstatusOK: idSubDoc } } }, 
-            { new: true } 
-        );
-
-        if (!productUpdatedProd) {
-            console.error('No se encontró el documento con IdProdServBK:', id);
-            return { success: false, error: 'Documento no encontrado' };
-        }
-
-        console.log('Documento actualizado después de la eliminación:', productUpdatedProd);
-        return { success: true, productUpdatedProd };
-    } catch (error) {
-        console.error('Error al intentar eliminar el subdocumento:', error);
         return { success: false, error };
     }
 };
