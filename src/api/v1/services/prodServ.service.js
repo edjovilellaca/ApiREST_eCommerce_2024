@@ -128,7 +128,7 @@ export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
     console.log('ID recibido:', id);
     console.log('Sección:', seccion);
 
-    const seccionesValidas = ['cat_prod_serv_estatus', 'cat_prod_serv_archivos'];
+    const seccionesValidas = ['estatus', 'presentaciones', 'info_ad'];
     if (!seccionesValidas.includes(seccion)) {
         console.error('Sección no válida:', seccion);
         return { success: false, error: 'Subdocumento no existe o no es válido' };
@@ -137,7 +137,7 @@ export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
     try {
         console.log('Objeto a agregar:', objInfoAd);
         const productUpdatedProd = await ProdServ.findOneAndUpdate(
-            { IdProdServPK: id }, 
+            { IdProdServOK: id }, 
             { $push: { [seccion]: objInfoAd } },
             { new: true } 
         );
@@ -160,7 +160,7 @@ export const delObjInfoAdProd = async (id, seccion = '', idSubDoc) => {
     console.log('Sección:', seccion);
     console.log('ID del subdocumento a eliminar:', idSubDoc);
 
-    const seccionesValidas = ['cat_prod_serv_estatus', 'cat_prod_serv_archivos'];
+    const seccionesValidas = ['estatus', 'presentaciones', 'info_ad'];
     if (!seccionesValidas.includes(seccion)) {
         console.error('Sección no válida:', seccion);
         return { success: false, error: 'Subdocumento no existe o no es válido' };
@@ -168,7 +168,7 @@ export const delObjInfoAdProd = async (id, seccion = '', idSubDoc) => {
 
     try {
         const productUpdatedProd = await ProdServ.findOneAndUpdate(
-            { IdProdServPK: id }, 
+            { IdProdServOK: id }, 
             { $pull: { [seccion]: { IdTipoEstatusOK: idSubDoc } } }, 
             { new: true } 
         );
@@ -190,7 +190,7 @@ export const updateObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
     console.log('ID recibido:', id);
     console.log('Sección:', seccion);
 
-    const seccionesValidas = ['cat_prod_serv_estatus', 'cat_prod_serv_archivos'];
+    const seccionesValidas = ['estatus', 'presentaciones', 'info_ad'];
     if (!seccionesValidas.includes(seccion)) {
         console.error('Sección no válida:', seccion);
         return { success: false, error: 'Subdocumento no existe o no es válido' };
@@ -200,7 +200,7 @@ export const updateObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
         console.log('Objeto a actualizar:', objInfoAd);
 
         const productUpdatedProd = await ProdServ.findOneAndUpdate(
-            { IdProdServPK: id, [`${seccion}.IdTipoEstatusOK`]: objInfoAd.IdTipoEstatusOK }, 
+            { IdProdServOK: id, [`${seccion}.IdTipoEstatusOK`]: objInfoAd.IdTipoEstatusOK }, 
             { $set: { [`${seccion}.$`]: objInfoAd } }, 
             { new: true } 
         );
