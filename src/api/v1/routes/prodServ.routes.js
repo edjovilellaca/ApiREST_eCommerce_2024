@@ -38,4 +38,7 @@ router.put('/updateInfoAd/:id/:seccion/:infoAdId', prodServController.updateInfo
 //Eliminar subdocumento de infoad
 router.delete('/infoad/:id/:seccion/:idSubDoc', prodServController.delInfoAdProd);
 
+//Añadir subdocumento presentaciones
+router.post('/:id/:presentaId/:seccion', prodServController.subPresentaciones);
+
 export default router;

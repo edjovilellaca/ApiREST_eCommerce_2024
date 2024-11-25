@@ -187,6 +187,23 @@ export const updateInfoAdProd = async (req, res, next) => {
     }
 };
 
+//Añadir subdocumento de presentaciones
+export const subPresentaciones = async (req, res, next) => {
+    try {
+        const { id, presentaId, seccion } = req.params;
+        const obj = req.body;
+
+        const updatedProdServItem = await ProdServServices.addSubPresenta(id, presentaId, seccion, obj );
+        if (!updatedProdServItem || updatedProdServItem.success === false) {
+            throw boom.badRequest('No se pudo agregar el subdocumento a presentaciones.');
+        } else if (updatedProdServItem) {
+            res.status(200).json(updatedProdServItem);
+        }
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 //Eliminar subdocumento infoAd
 export const delInfoAdProd = async (req, res, next) => {
