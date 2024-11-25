@@ -104,26 +104,7 @@ export const delManyProdServItem = async (filtro) => {
     }
 };
 
-/* export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
-    console.log('id: ', id);
-    console.log('seccion: ', seccion);
-    if(!seccion.match('cat_prod_serv_estatus' || !seccion.match('cat_prod_serv_archivos'))){
-        console.log('WOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOW')
-        return { succes: false, error: 'Subdocumento no existe' };
-    }
-    try {
-        console.log('objInfoAd: ', objInfoAd);
-        const productUpdatedProd = await ProdServ.findOneAndUpdate(
-            { IdProdServBK: id },
-            { $push: { seccion: objInfoAd } },
-            { new: true }
-        );
-        return { succes: true, productUpdatedProd };
-    } catch (error) {
-        return { succes: false, error };
-    }
-}; */
-
+// Agregar subdocumentos
 export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
     console.log('ID recibido:', id);
     console.log('Sección:', seccion);
@@ -147,18 +128,15 @@ export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
             return { success: false, error: 'Documento no encontrado' };
         }
 
-        console.log('Documento actualizado:', productUpdatedProd);
+        console.log('Documento agregado:', productUpdatedProd);
         return { success: true, productUpdatedProd };
     } catch (error) {
-        console.error('Error al actualizar el documento:', error);
+        console.error('Error al agregar el documento:', error);
         return { success: false, error };
     }
 };
 
 export const delObjInfoAdProd = async (id, seccion = '', idSubDoc) => {
-    console.log('ID recibido:', id);
-    console.log('Sección:', seccion);
-    console.log('ID del subdocumento a eliminar:', idSubDoc);
 
     const seccionesValidas = ['estatus', 'presentaciones', 'info_ad'];
     if (!seccionesValidas.includes(seccion)) {
@@ -166,10 +144,18 @@ export const delObjInfoAdProd = async (id, seccion = '', idSubDoc) => {
         return { success: false, error: 'Subdocumento no existe o no es válido' };
     }
 
+    let campo = "";
     try {
+        if ( seccion === "estatus" ) {
+            campo = "IdTipoEstatusOK"
+        } else if ( seccion === "presentaciones" ) {
+            campo = "IdPresentaOK"
+        } else {
+            campo = "IdEtiqueta"
+        }
         const productUpdatedProd = await ProdServ.findOneAndUpdate(
             { IdProdServOK: id }, 
-            { $pull: { [seccion]: { IdTipoEstatusOK: idSubDoc } } }, 
+            { $pull: { [seccion]: { [campo]: idSubDoc } } }, 
             { new: true } 
         );
 
@@ -214,6 +200,42 @@ export const updateObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
         return { success: true, productUpdatedProd };
     } catch (error) {
         console.error('Error al actualizar el subdocumento:', error);
+        return { success: false, error };
+    }
+};
+
+export const addSubPresenta = async (id, presentaId, seccion = '', objInfoAd) => {
+    console.log('ID recibido:', id);
+    console.log('presentaId: ',presentaId);
+    console.log('Sección:', seccion);
+
+    const seccionesValidas = ['estatus', 'info_vta', 'archivos'];
+    if (!seccionesValidas.includes(seccion)) {
+
+        return { success: false, error: 'Subdocumento no existe o no es válido' };
+    }
+
+    try {
+
+        const estatusAdd = await ProdServ.findOneAndUpdate(
+            { IdProdServOK: id, 'presentaciones.IdPresentaOK': presentaId }, 
+            {
+                $push: {
+                    [`presentaciones.$.${seccion}`]: objInfoAd
+                }
+            },
+            { new: true } 
+        );
+
+        if (!estatusAdd) {
+            console.error('No se encontró el documento con IdProdServOK:', id);
+            return { success: false, error: 'Documento no encontrado' };
+        }
+
+        console.log('Documento agregado:', estatusAdd);
+        return { success: true, estatusAdd };
+    } catch (error) {
+        console.error('Error al agregar el subdocumento:', error);
         return { success: false, error };
     }
 };

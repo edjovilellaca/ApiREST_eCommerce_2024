@@ -32,4 +32,7 @@ router.delete('/:id/:seccion/:idSubDoc', prodServController.delSubProdServItem);
 //Actualizar subdocumento
 router.post('/update/:id/:seccion', prodServController.updateSubProdServItem);
 
+//Añadir subdocumento presentaciones
+router.post('/:id/:presentaId/:seccion', prodServController.subPresentaciones);
+
 export default router;
