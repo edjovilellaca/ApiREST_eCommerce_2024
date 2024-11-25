@@ -152,6 +152,7 @@ export const delSubProdServItem = async (req, res, next) => {
         next(error);
     }
 };
+
 // Actualizar subdocumento
 export const updateSubProdServItem = async (req, res, next) => {
     try {
@@ -164,6 +165,40 @@ export const updateSubProdServItem = async (req, res, next) => {
         } else if (updatedProdServItem) {
             res.status(200).json(updatedProdServItem);
         }
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Actualizar subdocumento
+export const updateInfoAdProd = async (req, res, next) => {
+    try {
+        const { id, seccion, infoAdId } = req.params;
+        const paProdServItem = req.body;
+        
+        const updatedProdServItem = await ProdServServices.updateInfoAdProd(id, seccion, paProdServItem, infoAdId );
+        if (!updatedProdServItem || updatedProdServItem.success === false) {
+            throw boom.badRequest('No se pudo actualizar el subdocumento del producto.');
+        } else if (updatedProdServItem) {
+            res.status(200).json(updatedProdServItem);
+        }
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+//Eliminar subdocumento infoAd
+export const delInfoAdProd = async (req, res, next) => {
+    try {
+        const { id, seccion, idSubDoc } = req.params; 
+        console.log('PEro si jalaaaaa? ', idSubDoc);
+        const updatedProdServItem = await ProdServServices.delInfoAdProd(id, seccion, idSubDoc);
+
+        if (!updatedProdServItem || updatedProdServItem.success === false) {
+            throw boom.badRequest('No se pudo eliminar el subdocumento del producto.');
+        }
+        res.status(200).json(updatedProdServItem);
     } catch (error) {
         next(error);
     }
