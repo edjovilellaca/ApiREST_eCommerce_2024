@@ -32,7 +32,7 @@ export const getProdServItem = async( id, keyType) => {
 };
 
 export const postProdServItem = async( paProdServItem ) => {
-    console.log('paProdServItem: ', paProdServItem);
+
     try{
         const newProdServ = new ProdServ( paProdServItem );
         return await newProdServ.save();
@@ -90,8 +90,6 @@ export const delManyProdServItem = async (filtro) => {
 
 // Agregar subdocumentos
 export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
-    console.log('ID recibido:', id);
-    console.log('Sección:', seccion);
 
     const seccionesValidas = ['estatus', 'presentaciones', 'info_ad'];
     if (!seccionesValidas.includes(seccion)) {
@@ -100,7 +98,7 @@ export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
     }
 
     try {
-        console.log('Objeto a agregar:', objInfoAd);
+
         const productUpdatedProd = await ProdServ.findOneAndUpdate(
             { IdProdServOK: id }, 
             { $push: { [seccion]: objInfoAd } },
@@ -112,7 +110,6 @@ export const pushObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
             return { success: false, error: 'Documento no encontrado' };
         }
 
-        console.log('Documento agregado:', productUpdatedProd);
         return { success: true, productUpdatedProd };
     } catch (error) {
         console.error('Error al agregar el documento:', error);
@@ -148,7 +145,6 @@ export const delObjInfoAdProd = async (id, seccion = '', idSubDoc) => {
             return { success: false, error: 'Documento no encontrado' };
         }
 
-        console.log('Documento actualizado después de la eliminación:', productUpdatedProd);
         return { success: true, productUpdatedProd };
     } catch (error) {
         console.error('Error al intentar eliminar el subdocumento:', error);
@@ -157,8 +153,6 @@ export const delObjInfoAdProd = async (id, seccion = '', idSubDoc) => {
 };
 
 export const updateObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
-    console.log('ID recibido:', id);
-    console.log('Sección:', seccion);
 
     const seccionesValidas = ['estatus', 'presentaciones', 'info_ad'];
     if (!seccionesValidas.includes(seccion)) {
@@ -166,7 +160,6 @@ export const updateObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
         return { success: false, error: 'Subdocumento no existe o no es válido' };
     }
     try {
-        console.log('Objeto a actualizar:', objInfoAd);
         const productUpdatedProd = await ProdServ.findOneAndUpdate(
             { IdProdServOK: id, [`${seccion}.IdTipoEstatusOK`]: objInfoAd.IdTipoEstatusOK }, 
             { $set: { [`${seccion}.$`]: objInfoAd } }, 
@@ -176,7 +169,6 @@ export const updateObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
             console.error('No se encontró el documento o el subdocumento con los IDs proporcionados:', id, objInfoAd._id);
             return { success: false, error: 'Documento o subdocumento no encontrado' };
         }
-        console.log('Documento actualizado:', productUpdatedProd);
         return { success: true, productUpdatedProd };
     } catch (error) {
         console.error('Error al actualizar el subdocumento:', error);
@@ -185,9 +177,6 @@ export const updateObjInfoAdProd = async (id, seccion = '', objInfoAd) => {
 };
 
 export const addSubPresenta = async (id, presentaId, seccion = '', objInfoAd) => {
-    console.log('ID recibido:', id);
-    console.log('presentaId: ',presentaId);
-    console.log('Sección:', seccion);
 
     const seccionesValidas = ['estatus', 'info_vta', 'archivos'];
     if (!seccionesValidas.includes(seccion)) {
@@ -203,7 +192,6 @@ export const addSubPresenta = async (id, presentaId, seccion = '', objInfoAd) =>
             console.error('No se encontró el documento con IdProdServOK:', id);
             return { success: false, error: 'Documento no encontrado' };
         }
-        console.log('Documento agregado:', estatusAdd);
         return { success: true, estatusAdd };
     } catch (error) {
         console.error('Error al agregar el subdocumento:', error);
@@ -211,10 +199,31 @@ export const addSubPresenta = async (id, presentaId, seccion = '', objInfoAd) =>
     }
 };
 
+export const updateSubPresenta = async (id, presentaId, campoId, seccion = '', objInfoAd) => {
+
+    const seccionesValidas = ['estatus', 'info_vta', 'archivos'];
+    if (!seccionesValidas.includes(seccion)) {
+        return { success: false, error: 'Subdocumento no existe o no es válido' };
+    }
+    try {
+
+        const estatusUpdated = await ProdServ.findOneAndUpdate(
+            { IdProdServOK: id, 'presentaciones.IdPresentaOK': presentaId  }, 
+            {$set: { [`presentaciones.$.${seccion}`]: objInfoAd } },
+            { new: true, arrayFilters: [{ [`presentaciones.$.${seccion}._id`]: campoId }] } 
+        );
+        if (!estatusUpdated) {
+            console.error('No se encontró el documento con IdProdServOK:', id);
+            return { success: false, error: 'Documento no encontrado' };
+        }
+        return { success: true, estatusUpdated };
+    } catch (error) {
+        console.error('Error al agregar el subdocumento:', error);
+        return { success: false, error };
+    }
+};
 
 export const updateInfoAdProd = async (id, seccion = '', objInfoAd, infoAdId) => {
-    console.log('ID recibido:', id);
-    console.log('Sección:', seccion);
 
     const seccionesValidas = ['estatus', 'presentaciones', 'info_ad'];
     if (!seccionesValidas.includes(seccion)) {
@@ -223,7 +232,6 @@ export const updateInfoAdProd = async (id, seccion = '', objInfoAd, infoAdId) =>
     }
 
     try {
-        console.log('Objeto a actualizar:', objInfoAd.infoAdId);
 
         const productUpdatedProd = await ProdServ.findOneAndUpdate(
             { IdProdServOK: id, [`${seccion}._id`]: infoAdId }, 
@@ -236,7 +244,6 @@ export const updateInfoAdProd = async (id, seccion = '', objInfoAd, infoAdId) =>
             return { success: false, error: 'Documento o subdocumento no encontrado' };
         }
 
-        console.log('Documento actualizado:', productUpdatedProd);
         return { success: true, productUpdatedProd };
     } catch (error) {
         console.error('Error al actualizar el subdocumento:', error);
@@ -245,9 +252,6 @@ export const updateInfoAdProd = async (id, seccion = '', objInfoAd, infoAdId) =>
 };
 
 export const delInfoAdProd = async (id, seccion = '', idSubDoc) => {
-    console.log('ID recibido:', id);
-    console.log('Sección:', seccion);
-    console.log('ID del subdocumento a eliminar:', idSubDoc);
 
     const seccionesValidas = ['estatus', 'presentaciones', 'info_ad'];
     if (!seccionesValidas.includes(seccion)) {
@@ -267,7 +271,6 @@ export const delInfoAdProd = async (id, seccion = '', idSubDoc) => {
             return { success: false, error: 'Documento no encontrado' };
         }
 
-        console.log('Documento actualizado después de la eliminación:', productUpdatedProd);
         return { success: true, productUpdatedProd };
     } catch (error) {
         console.error('Error al intentar eliminar el subdocumento:', error);

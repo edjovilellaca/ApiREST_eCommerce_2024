@@ -24,11 +24,8 @@ export const getProdServItem = async ( req, res, next ) => {
     try{
 
         const { id } = req.params;
-        console.log('id: ', id);
         const keyType = req.query.keyType || 'OK';
-        console.log('key: ', keyType);
         const ProdServItem = await ProdServServices.getProdServItem( id, keyType );
-        console.log(JSON.stringify(ProdServItem));
 
         if(!ProdServItem){
             throw boom.notFound('No se encontró el producto');
@@ -45,7 +42,6 @@ export const getProdServItem = async ( req, res, next ) => {
 export const postProdServItem = async ( req, res, next ) => {
     try {
         const paProdServItem = req.body;
-        console.log('prodController: ', paProdServItem);
         const newProdServItem = await ProdServServices.postProdServItem(paProdServItem);
         if (!newProdServItem) {
           throw boom.badRequest('No se pudo crear el Producto y/o Servicio.');
@@ -141,7 +137,6 @@ export const subProdServItem = async (req, res, next) => {
 export const delSubProdServItem = async (req, res, next) => {
     try {
         const { id, seccion, idSubDoc } = req.params; 
-        console.log('PEro si jala? ', idSubDoc);
         const updatedProdServItem = await ProdServServices.delObjInfoAdProd(id, seccion, idSubDoc);
 
         if (!updatedProdServItem || updatedProdServItem.success === false) {
@@ -204,12 +199,27 @@ export const subPresentaciones = async (req, res, next) => {
     }
 };
 
+//Actualizar subdocumento de presentaciones
+export const updateSubPresentaciones = async (req, res, next) => {
+    try {
+        const { id, presentaId, campoId, seccion } = req.params;
+        const obj = req.body;
+
+        const updatedSubPresenta = await ProdServServices.updateSubPresenta(id, presentaId, campoId, seccion, obj );
+        if (!updatedSubPresenta || updatedSubPresenta.success === false) {
+            throw boom.badRequest('No se pudo actualizar el subdocumento de presentaciones.');
+        } else if (updatedSubPresenta) {
+            res.status(200).json(updatedSubPresenta);
+        }
+    } catch (error) {
+        next(error);
+    }
+};
 
 //Eliminar subdocumento infoAd
 export const delInfoAdProd = async (req, res, next) => {
     try {
         const { id, seccion, idSubDoc } = req.params; 
-        console.log('PEro si jalaaaaa? ', idSubDoc);
         const updatedProdServItem = await ProdServServices.delInfoAdProd(id, seccion, idSubDoc);
 
         if (!updatedProdServItem || updatedProdServItem.success === false) {
